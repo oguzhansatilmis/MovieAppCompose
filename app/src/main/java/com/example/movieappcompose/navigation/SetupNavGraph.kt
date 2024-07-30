@@ -27,8 +27,10 @@ fun SetupNavGraph(navController: NavHostController) {
         ) {
 
             val movieId = it.arguments?.getString("movieId")
+            movieId?.let {
+                DetailScreen(navController,it)
+            }
 
-            DetailScreen(navController,movieId)
         }
     }
 }

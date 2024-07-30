@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.movieappcompose.navigation.SetupNavGraph
@@ -19,8 +20,9 @@ class MainActivity : ComponentActivity() {
         lateinit var navController: NavHostController
         enableEdgeToEdge()
         setContent {
+
             navController = rememberNavController()
-            SetupNavGraph(navController = navController)
+           SetupNavGraph(navController = navController)
 //            MovieAppComposeTheme {
 //                DetailScreen()
 //            }
