@@ -1,4 +1,4 @@
-package com.example.repository
+package com.example.movieappcompose.repository
 
 import com.example.movieappcompose.service.ApiService
 import javax.inject.Inject
@@ -12,5 +12,10 @@ class Repository @Inject constructor(
     }
     suspend fun getMoviesById(movieId:Long) = safeApiCall {
         apiService.getMovieById(movieId)
+    }
+
+    suspend fun getSearchMovies(query:String) = safeApiCall {
+
+        apiService.getSearch(query)
     }
 }

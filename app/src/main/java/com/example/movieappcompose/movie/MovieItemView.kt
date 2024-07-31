@@ -25,16 +25,17 @@ import com.example.movieappcompose.model.Movie
 @Composable
 fun MovieItemView(movie: Movie,onClick: (movieId:String) -> Unit) {
     Column(modifier = Modifier
-        .height(256.dp)
-        .clickable { onClick(movie.id.toString()) }) {
+        .height(146.dp)
+        .padding(8.dp)
+        .clickable { onClick(movie.id.toString()) },){
         AsyncImage(
-            model = "https://image.tmdb.org/t/p/w200"+movie.backdropPath,
+            model = ("https://image.tmdb.org/t/p/w200" + movie.backdropPath) ?: "",
             contentDescription = "",
             modifier = Modifier
                 .fillMaxWidth()
         )
         Text(
-            text = movie.title,
+            text = movie.title ?:"",
             modifier = Modifier
                 .background(colorResource(id = R.color.banner_black))
                 .fillMaxWidth(),

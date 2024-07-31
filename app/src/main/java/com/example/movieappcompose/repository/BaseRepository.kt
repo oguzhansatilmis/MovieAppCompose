@@ -1,4 +1,4 @@
-package com.example.repository
+package com.example.movieappcompose.repository
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

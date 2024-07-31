@@ -4,10 +4,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.movieappcompose.model.DisplayResponse
 import com.example.movieappcompose.model.MovieResponse
 import com.example.movieappcompose.model.Resource
-import com.example.repository.Repository
+import com.example.movieappcompose.repository.Repository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,6 +23,10 @@ class MovieViewModel @Inject constructor(
     //Encapsulation
     private val _popularMovies = MutableLiveData<Resource<MovieResponse>>(Resource.Loading())
     val popularMovies: LiveData<Resource<MovieResponse>> = _popularMovies
+
+
+
+
 
 
     fun getPopularMovies(page: Int) {
@@ -39,8 +47,29 @@ class MovieViewModel @Inject constructor(
                     _popularMovies.value = Resource.Error(message = "Network Error")
                 }
             }
+        }
+    }
 
 
+    private val _searchMovies = MutableStateFlow<Resource<DisplayResponse>>(Resource.Loading())
+    val searchMovies  = _searchMovies.asStateFlow()
+
+
+
+    fun searchMovie(query: String){
+        viewModelScope.launch {
+            val searchMovies = repository.getSearchMovies(query)
+            searchMovies?.let {
+                if (searchMovies.isSuccessful){
+                    val searchMoviesBody = searchMovies.body()
+                    searchMoviesBody?.let { searchMovie->
+                        _searchMovies.value = Resource.Success(searchMovie)
+                    }
+                }
+                else{
+                    _searchMovies.value = Resource.Error(message = "Network Error")
+                }
+            }
         }
     }
 }
