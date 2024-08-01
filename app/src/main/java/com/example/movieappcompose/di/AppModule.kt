@@ -1,5 +1,7 @@
 package com.example.movieappcompose.di
 
+import android.content.Context
+import androidx.room.Room
 import com.example.movieappcompose.service.ApiService
 import com.example.movieappcompose.util.Constants
 import com.google.gson.Gson
@@ -7,6 +9,7 @@ import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -37,12 +40,10 @@ object AppModule {
             this.level = HttpLoggingInterceptor.Level.BODY
         }
     }
-
     @Provides
     fun provideOkHttpClient(): OkHttpClient {
         return OkHttpClient.Builder().build()
     }
-
     @Singleton
     @Provides
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
@@ -52,11 +53,8 @@ object AppModule {
             .client(okHttpClient)
             .build()
     }
-
     @Singleton
     @Provides
     fun provideApiService(retrofit: Retrofit): ApiService = retrofit.create(ApiService::class.java)
-
-
 
 }

@@ -2,6 +2,7 @@ package com.example.movieappcompose.detail
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,8 +25,12 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,12 +41,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.example.movieappcompose.R
 import com.example.movieappcompose.model.Resource
-import com.example.movieappcompose.movie.MovieLazyColumn
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -50,10 +58,10 @@ import com.example.movieappcompose.movie.MovieLazyColumn
 fun DetailScreen(navController: NavController, movieId: String) {
 
     val viewModel: DetailViewModel = hiltViewModel()
-
     viewModel.getPopularMovieById(movieId.toLong())
-
     val detailState by viewModel.popularMoviesById.observeAsState()
+
+    var isFavorite by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -67,12 +75,15 @@ fun DetailScreen(navController: NavController, movieId: String) {
                     )
                     {
                         Text(text = "Contents Detail")
-
                         Image(
-                            painter = painterResource(id = R.drawable.star_2),
+                            painter = painterResource(if (isFavorite) R.drawable.star_1 else R.drawable.star_2),
                             contentDescription = "",
                             modifier = Modifier
                                 .size(30.dp, 30.dp)
+                                .clickable {
+                                    isFavorite = !isFavorite
+
+                                }
                                 .align(alignment = Alignment.CenterEnd),
                             alignment = Alignment.CenterEnd
                         )
@@ -89,7 +100,6 @@ fun DetailScreen(navController: NavController, movieId: String) {
 
                 data?.let {
                     Column(modifier = Modifier.fillMaxSize()) {
-
                         AsyncImage(
                             model = "https://image.tmdb.org/t/p/w200" + data.posterPath,
                             contentDescription = "",
@@ -107,37 +117,40 @@ fun DetailScreen(navController: NavController, movieId: String) {
                             Column(
                                 Modifier
                                     .fillMaxSize()
-                                    .padding(16.dp)) {
-                                Text(text = data.title,
+                                    .padding(16.dp)
+                            ) {
+                                Text(
+                                    text = data.title,
                                     modifier = Modifier.fillMaxWidth(),
                                     fontSize = 24.sp
                                 )
                                 Spacer(modifier = Modifier.padding(vertical = 4.dp))
                                 Text(text = data.overview, modifier = Modifier.fillMaxWidth())
                                 Spacer(modifier = Modifier.padding(vertical = 4.dp))
-                                Text(text = "Vote Count:${data.voteCount}", modifier = Modifier.fillMaxWidth())
+                                Text(
+                                    text = "Vote Count:${data.voteCount}",
+                                    modifier = Modifier.fillMaxWidth()
+                                )
                             }
                         }
                     }
                 }
-
             }
 
             is Resource.Loading -> {
                 CircularProgressIndicator()
             }
+
             is Resource.Error -> {}
             else -> {}
         }
-
     }
 }
-
 
 @Preview
 @Composable
 fun DetailScreenPreview() {
-  val navController = rememberNavController()
+    val navController = rememberNavController()
     DetailScreen(navController, "12")
 
 }

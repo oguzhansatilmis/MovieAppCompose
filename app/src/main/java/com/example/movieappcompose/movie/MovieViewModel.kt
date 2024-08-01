@@ -24,16 +24,9 @@ class MovieViewModel @Inject constructor(
     private val _popularMovies = MutableLiveData<Resource<MovieResponse>>(Resource.Loading())
     val popularMovies: LiveData<Resource<MovieResponse>> = _popularMovies
 
-
-
-
-
-
     fun getPopularMovies(page: Int) {
         viewModelScope.launch {
             val popularMovies = repository.getMovie(page)
-
-
             popularMovies?.let {
 
                 if (popularMovies.isSuccessful) {
@@ -45,29 +38,6 @@ class MovieViewModel @Inject constructor(
                     }
                 } else {
                     _popularMovies.value = Resource.Error(message = "Network Error")
-                }
-            }
-        }
-    }
-
-
-    private val _searchMovies = MutableStateFlow<Resource<DisplayResponse>>(Resource.Loading())
-    val searchMovies  = _searchMovies.asStateFlow()
-
-
-
-    fun searchMovie(query: String){
-        viewModelScope.launch {
-            val searchMovies = repository.getSearchMovies(query)
-            searchMovies?.let {
-                if (searchMovies.isSuccessful){
-                    val searchMoviesBody = searchMovies.body()
-                    searchMoviesBody?.let { searchMovie->
-                        _searchMovies.value = Resource.Success(searchMovie)
-                    }
-                }
-                else{
-                    _searchMovies.value = Resource.Error(message = "Network Error")
                 }
             }
         }

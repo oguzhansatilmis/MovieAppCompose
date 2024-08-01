@@ -7,15 +7,12 @@ class Repository @Inject constructor(
     private val apiService: ApiService,
 ) : BaseRepository() {
 
-    suspend fun getMovie(page:Int) = safeApiCall {
+    suspend fun getMovie(page: Int) = safeApiCall {
         apiService.getMovies(page)
     }
-    suspend fun getMoviesById(movieId:Long) = safeApiCall {
+
+    suspend fun getMoviesById(movieId: Long) = safeApiCall {
         apiService.getMovieById(movieId)
     }
 
-    suspend fun getSearchMovies(query:String) = safeApiCall {
-
-        apiService.getSearch(query)
-    }
 }
